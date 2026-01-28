@@ -4,16 +4,17 @@ WITH tb_transacoes AS
     idCliente,
     QtdePontos,
     datetime(substr(DtCriacao,1,19)) AS DtCriacao,
-    julianday('now') - julianday(substr(DtCriacao,1,10)) AS diffDate,
+    julianday('{date}') - julianday(substr(DtCriacao,1,10)) AS diffDate,
     CAST(strftime('%H', substr(DtCriacao, 1, 19)) AS INTEGER) AS dtHora
     FROM transacoes
+    WHERE DtCriacao < '{date}'
 ),
 
 tb_cliente AS 
 (
     SELECT IdCliente,
     datetime(substr(DtCriacao,1,19)) AS DtCriacao,
-    julianday('now') - julianday(substr(DtCriacao,1,10)) AS IdadeCliente
+    julianday('{date}') - julianday(substr(DtCriacao,1,10)) AS IdadeCliente
     FROM clientes
 ),
 
@@ -179,7 +180,13 @@ tb_join AS (
 
 )
 
-SELECT *,
-    1. QtTransacoes28 / QtTransacoesVida AS engajamento28Vida
+
+SELECT '{date}' as dtRef,
+    *,
+    1. * QtTransacoes28 / QtTransacoesVida AS engajamento28Vida
 
 FROM tb_join
+ORDER BY IdCliente
+
+
+
